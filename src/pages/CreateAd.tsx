@@ -17,7 +17,7 @@ export default function CreateAd() {
 
   const [formData, setFormData] = useState({
     title: '',
-    type: 'COVER_OVERLAY' as 'COVER_OVERLAY' | 'POWER_VIDEO',
+    type: 'COVER_OVERLAY' as 'COVER_OVERLAY' | 'POWER_VIDEO' | 'APP_OPEN',
     landingUrl: '',
     startDate: '',
     endDate: '',
@@ -60,7 +60,7 @@ export default function CreateAd() {
       const { data: presignedData } = await api.post('/upload/presigned-url', {
         fileName: file.name,
         contentType: file.type,
-        uploadType: formData.type === 'COVER_OVERLAY' ? 'ad_image' : 'ad_video'
+        uploadType: formData.type === 'POWER_VIDEO' ? 'ad_video' : 'ad_image'
       });
 
       const { uploadUrl, publicUrl, s3Key: key } = presignedData.data;
@@ -136,6 +136,7 @@ export default function CreateAd() {
               >
                 <option value="COVER_OVERLAY">Cover Overlay (1:1) - ₹5.00 / Click</option>
                 <option value="POWER_VIDEO">Power Video (9:16) - ₹0.15 / View</option>
+                <option value="APP_OPEN">App Open Interstitial (Image) - ₹0.15 / View</option>
               </select>
             </div>
           </div>
@@ -190,7 +191,7 @@ export default function CreateAd() {
             ref={fileInputRef} 
             onChange={handleFileChange} 
             style={{ display: 'none' }} 
-            accept={formData.type === 'COVER_OVERLAY' ? 'image/*' : 'video/*'}
+            accept={formData.type === 'POWER_VIDEO' ? 'video/*' : 'image/*'}
           />
 
           <div 
@@ -218,7 +219,11 @@ export default function CreateAd() {
                 <div>
                   <h4>Upload Media Attachment</h4>
                   <p className="text-secondary text-sm">
-                    {formData.type === 'COVER_OVERLAY' ? 'Select your 1:1 square image (JPG, PNG)' : 'Select your 9:16 vertical video (MP4, max 30s)'}
+                    {formData.type === 'COVER_OVERLAY'
+                      ? 'Select your 1:1 square image (JPG, PNG)'
+                      : formData.type === 'APP_OPEN'
+                      ? 'Select a portrait or landscape image (JPG, PNG) — shown on app open'
+                      : 'Select your 9:16 vertical video (MP4, max 30s)'}
                   </p>
                 </div>
               </>
@@ -329,6 +334,23 @@ export default function CreateAd() {
                       </div>
                     </div>
                   </div>
+                ) : formData.type === 'APP_OPEN' ? (
+                  /* App Open Interstitial Mockup */
+                  <div style={{ height: '100%', background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
+                    <div style={{ background: '#1A1A1A', borderRadius: '12px', overflow: 'hidden', width: '100%', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
+                      <div style={{ padding: '8px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontSize: '8px', fontWeight: 'bold', color: 'var(--primary-accent)', background: 'rgba(56,139,253,0.15)', padding: '2px 6px', borderRadius: '4px', letterSpacing: '1px' }}>SPONSORED</span>
+                        <span style={{ fontSize: '9px', color: 'rgba(255,255,255,0.5)' }}>{formData.title || 'Your Title'}</span>
+                      </div>
+                      <div style={{ background: '#2A2A2A', aspectRatio: '4/3', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        {filePreview ? <img src={filePreview} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="Ad" /> : <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)' }}>Image Ad</span>}
+                      </div>
+                      <div style={{ padding: '10px 12px 6px' }}>
+                        <div style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '20px', padding: '6px', textAlign: 'center', fontSize: '10px', color: 'rgba(255,255,255,0.8)', fontWeight: '600' }}>Got It</div>
+                        <p style={{ textAlign: 'center', fontSize: '8px', color: 'rgba(255,255,255,0.25)', marginTop: '4px' }}>Remove ads with Premium</p>
+                      </div>
+                    </div>
+                  </div>
                 ) : (
                   /* Video Player Mockup */
                   <div style={{ height: '100%', position: 'relative' }}>
@@ -397,8 +419,8 @@ export default function CreateAd() {
                 <div className="text-right mt-1">
                   <span className="text-xs text-secondary">Estimated Delivery: </span>
                   <span className="text-xs font-bold text-accent">
-                     {formData.type === 'COVER_OVERLAY' 
-                        ? `~${Math.floor(Number(formData.dailyBudget) / 5)} Clicks` 
+                     {formData.type === 'COVER_OVERLAY'
+                        ? `~${Math.floor(Number(formData.dailyBudget) / 5)} Clicks`
                         : `~${Math.floor(Number(formData.dailyBudget) / 0.15).toLocaleString()} Views`}
                   </span>
                 </div>

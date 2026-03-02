@@ -1,0 +1,10 @@
+2026-02-27 23:41:50.967 IST [58703] LOG:  starting PostgreSQL 14.15 (Homebrew) on x86_64-apple-darwin23.6.0, compiled by Apple clang version 16.0.0 (clang-1600.0.26.4), 64-bit
+2026-02-27 23:41:50.969 IST [58703] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2026-02-27 23:41:50.970 IST [58703] LOG:  listening on IPv6 address "::1", port 5432
+2026-02-27 23:41:50.970 IST [58703] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2026-02-27 23:41:50.995 IST [58704] LOG:  database system was shut down at 2026-02-26 20:01:09 IST
+2026-02-27 23:41:51.004 IST [58703] LOG:  database system is ready to accept connections
+2026-02-28 01:45:43.833 IST [58703] LOG:  received smart shutdown request
+2026-02-28 01:45:43.836 IST [58703] LOG:  background worker "logical replication launcher" (PID 58710) exited with exit code 1
+2026-02-28 01:45:43.836 IST [58705] LOG:  shutting down
+2026-02-28 01:45:43.850 IST [58703] LOG:  database system is shut down

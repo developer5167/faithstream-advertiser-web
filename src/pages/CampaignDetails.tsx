@@ -135,11 +135,12 @@ export default function CampaignDetails() {
         <div className="card flex-col">
           <h3 className="mb-4">Ad Creative</h3>
           <div style={{ flex: 1, backgroundColor: 'var(--bg-color)', borderRadius: 'var(--border-radius-md)', border: '1px solid var(--border-color)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            {ad.ad_type === 'COVER_OVERLAY' ? (
-               <img src={ad.media_url} alt="creative" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-            ) : (
+            {ad.ad_type === 'POWER_VIDEO' ? (
                <video src={ad.media_url} style={{ width: '100%', height: '100%', objectFit: 'contain' }} controls muted />
+            ) : (
+               <img src={ad.media_url} alt="creative" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
             )}
+
           </div>
           <div className="mt-4 pt-4" style={{ borderTop: '1px solid var(--border-color)' }}>
              <p className="text-secondary text-sm mb-1">Destination URL</p>
