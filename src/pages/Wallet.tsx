@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { CreditCard, History, IndianRupee, Loader2, ArrowUpRight, TrendingDown } from 'lucide-react';
+import { CreditCard, History, Loader2, ArrowUpRight, TrendingDown } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 

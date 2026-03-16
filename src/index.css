@@ -2,14 +2,14 @@
 
 :root {
   /* Color Palette */
-  --bg-color: #0d1117;
-  --bg-secondary: #161b22;
-  --bg-overlay: rgba(22, 27, 34, 0.7);
+  --bg-color: #040B1F;
+  --bg-secondary: #0F172A;
+  --bg-overlay: rgba(15, 23, 42, 0.7);
   --text-primary: #f0f6fc;
   --text-secondary: #8b949e;
   
-  --primary-accent: #58a6ff;
-  --primary-hover: #3182ce;
+  --primary-accent: #8B5CF6;
+  --primary-hover: #D946EF;
   
   --success: #238636;
   --danger: #cf222e;
