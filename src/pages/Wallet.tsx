@@ -12,7 +12,7 @@ interface Transaction {
 }
 
 export default function Wallet() {
-  const { advertiser } = useAuth();
+  const { advertiser, refreshWallet } = useAuth();
   const [balance, setBalance] = useState<number>(0);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
@@ -97,6 +97,7 @@ export default function Wallet() {
             setBalance(Number(verifyRes.data.newBalance));
             setDepositAmount('');
             fetchWalletData(); // refresh history
+            refreshWallet(); // update global balance
           } catch (err) {
             setError('Payment verification failed.');
           }

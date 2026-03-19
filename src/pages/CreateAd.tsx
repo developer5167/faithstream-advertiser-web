@@ -1,10 +1,20 @@
-import { useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { UploadCloud, CheckCircle2, AlertTriangle, ArrowRight, ArrowLeft, Loader2, FileText, PlayCircle, Music, SkipForward, SkipBack, Share2, MoreVertical, Heart } from 'lucide-react';
 import api from '../services/api';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 export default function CreateAd() {
+  const { walletBalance } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (walletBalance <= 0) {
+      navigate('/');
+    }
+  }, [walletBalance, navigate]);
+
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -13,7 +23,6 @@ export default function CreateAd() {
   const [error, setError] = useState('');
   
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     title: '',
@@ -24,9 +33,32 @@ export default function CreateAd() {
     dailyBudget: ''
   });
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const validateAspectRatio = (file: File, expectedRatio: number, tolerance = 0.05): Promise<boolean> => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        const ratio = img.width / img.height;
+        URL.revokeObjectURL(img.src);
+        resolve(Math.abs(ratio - expectedRatio) < tolerance);
+      };
+      img.onerror = () => resolve(false);
+      img.src = URL.createObjectURL(file);
+    });
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
+      setError('');
+      
+      if (formData.type === 'COVER_OVERLAY' || formData.type === 'APP_OPEN') {
+        const isSquare = await validateAspectRatio(selectedFile, 1);
+        if (!isSquare) {
+          setError("Error: This ad format requires a strictly 1:1 (square) image. Please upload a square image.");
+          return;
+        }
+      }
+
       setFile(selectedFile);
       if (filePreview) URL.revokeObjectURL(filePreview);
       setFilePreview(URL.createObjectURL(selectedFile));
@@ -220,9 +252,9 @@ export default function CreateAd() {
                   <h4>Upload Media Attachment</h4>
                   <p className="text-secondary text-sm">
                     {formData.type === 'COVER_OVERLAY'
-                      ? 'Select your 1:1 square image (JPG, PNG)'
+                      ? 'Select your strictly 1:1 square image (JPG, PNG)'
                       : formData.type === 'APP_OPEN'
-                      ? 'Select a portrait or landscape image (JPG, PNG) — shown on app open'
+                      ? 'Select a 1:1 square image (JPG, PNG) — strictly required'
                       : 'Select your 9:16 vertical video (MP4, max 30s)'}
                   </p>
                 </div>
@@ -342,8 +374,8 @@ export default function CreateAd() {
                         <span style={{ fontSize: '8px', fontWeight: 'bold', color: 'var(--primary-accent)', background: 'rgba(56,139,253,0.15)', padding: '2px 6px', borderRadius: '4px', letterSpacing: '1px' }}>SPONSORED</span>
                         <span style={{ fontSize: '9px', color: 'rgba(255,255,255,0.5)' }}>{formData.title || 'Your Title'}</span>
                       </div>
-                      <div style={{ background: '#2A2A2A', aspectRatio: '4/3', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        {filePreview ? <img src={filePreview} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="Ad" /> : <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)' }}>Image Ad</span>}
+                      <div style={{ background: '#2A2A2A', aspectRatio: '1/1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        {filePreview ? <img src={filePreview} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="Ad" /> : <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)' }}>Square Image Ad</span>}
                       </div>
                       <div style={{ padding: '10px 12px 6px' }}>
                         <div style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '20px', padding: '6px', textAlign: 'center', fontSize: '10px', color: 'rgba(255,255,255,0.8)', fontWeight: '600' }}>Got It</div>
